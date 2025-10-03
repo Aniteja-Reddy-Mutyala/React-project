@@ -2,6 +2,10 @@ import express from "express";
 import { MongoClient, ReturnDocument, ServerApiVersion } from "mongodb";
 import admin from "firebase-admin";
 import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+const __filename=fileURLToPath(import.meta.url)
+const __dirname=path.dirname(__filename)
 const credentials = JSON.parse(fs.readFileSync("./credentials.json"));
 
 admin.initializeApp({
@@ -26,9 +30,10 @@ async function connectToDB() {
     {name:"learn-node",upVotes:0,comments:[]},
     {name:"mongodb",upVotes:0,comments:[]}
 ]*/
+app.use(express.static(path.join(__dirname,'../dist')))
 app.use(express.json());
-app.get("/",(req,res)=>{
-    res.send("Welcome")
+app.get(/^(?!\/api).+/,(req,res)=>{
+    res.sendFile(path.join(__dirname,'../dist/index.html'))
 })
 app.get("/api/articles/:name", async (req, res) => {
   const { name } = req.params;
@@ -113,10 +118,11 @@ app.post("/api/articles/:name/comments", async (req, res) => {
   );
   res.json(updatedArticle);
 });
+const PORT=process.env.PORT ||8000
 async function start() {
   await connectToDB();
-  app.listen(8000, function () {
-    console.log("Server is listening to port 8000");
+  app.listen(PORT, function () {
+    console.log("Server is listening to port "+PORT);
   });
 }
 start();
