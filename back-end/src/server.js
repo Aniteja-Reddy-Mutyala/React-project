@@ -118,11 +118,11 @@ app.post("/api/articles/:name/comments", async (req, res) => {
   );
   res.json(updatedArticle);
 });
-const PORT=process.env.PORT ||8000
+const port=process.env.PORT ||8000
 async function start() {
   await connectToDB();
-  app.listen(PORT, function () {
-    console.log("Server is listening to port "+PORT);
+  app.listen(port, function () {
+    console.log("Server is listening to port "+port);
   });
 }
 start();
